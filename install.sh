@@ -63,6 +63,18 @@ fi
   systemctl status bt_speaker --full --no-pager
 echo "done."
 
+# Install and start service_manager daemon
+echo
+echo "Registering and starting service_manager with systemd..."
+systemctl enable /opt/bt-speaker/service_manager.service
+if [ "`systemctl is-active service_manager`" != "active" ]; then
+  systemctl start service_manager
+else
+  systemctl restart service_manager
+fi
+  systemctl status service_manager --full --no-pager
+echo "done."
+
 # Finished
 echo
 echo "BT-Speaker has been installed."

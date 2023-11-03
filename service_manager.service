@@ -1,0 +1,14 @@
+[Unit]
+Description="Simple bluetooth GPIO Service manager"
+After=bluetooth.target
+Requires=bluetooth.target
+
+[Service]
+TimeoutStartSec=0
+WorkingDirectory=/opt/bt-speaker
+ExecStart=/opt/bt-speaker/service-manager.py
+Restart=always
+User=btspeaker
+
+[Install]
+WantedBy=multi-user.target
