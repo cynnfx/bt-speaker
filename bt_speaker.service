@@ -6,7 +6,6 @@ Requires=bluetooth.target
 [Service]
 TimeoutStartSec=0
 WorkingDirectory=/opt/bt-speaker
-ExecStartPre=ogg123 /usr/share/sounds/freedesktop/stereo/service-login.oga && /bin/sleep 1
 ExecStart=/opt/bt-speaker/bt_speaker.py
 Restart=always
 User=btspeaker
