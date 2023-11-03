@@ -8,7 +8,7 @@ TimeoutStartSec=0
 WorkingDirectory=/opt/bt-speaker
 ExecStart=/opt/bt-speaker/service_manager.py
 Restart=always
-User=btspeaker
+User=root
 
 [Install]
 WantedBy=multi-user.target
