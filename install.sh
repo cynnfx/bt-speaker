@@ -10,6 +10,11 @@ apt update
 apt --yes --force-yes install git bluez python3 python3-gi python3-gi-cairo python3-cffi python3-dbus python3-alsaaudio sound-theme-freedesktop vorbis-tools
 echo "done."
 
+# Add config.txt parameter
+grep -qxF 'dtoverlay=hifiberry-dac' /boot/config.txt || echo 'dtoverlay=hifiberry-dac' >> /boot/config.txt
+grep -qxF 'dtoverlay=dwc2' /boot/config.txt || echo 'dtoverlay=dwc2' >> /boot/config.txt # enable usb ethernet 
+grep -qxF 'dtoverlay=disable-wifi' /boot/config.txt || echo 'dtoverlay=disable-wifi' >> /boot/config.txt
+
 # Add btspeaker user if not exist already
 echo
 echo "Adding btspeaker user..."
@@ -26,7 +31,7 @@ if [ -d bt-speaker ]; then
   cd bt-speaker && git pull && git checkout ${1:master}
 else
   echo "Downloading bt-speaker..."
-  git clone https://github.com/lukasjapan/bt-speaker.git
+  git clone https://github.com/cynnfx/bt-speaker.git
   cd bt-speaker && git checkout ${1:master}
 fi
 echo "done."
@@ -38,6 +43,9 @@ cp -n /opt/bt-speaker/hooks.default/connect /etc/bt_speaker/hooks/connect
 cp -n /opt/bt-speaker/hooks.default/disconnect /etc/bt_speaker/hooks/disconnect
 cp -n /opt/bt-speaker/hooks.default/startup /etc/bt_speaker/hooks/startup
 cp -n /opt/bt-speaker/hooks.default/track /etc/bt_speaker/hooks/track
+# Add alsa conf for HifiBerry Dac+ Lite
+cp -n /opt/bt-speaker/asound.conf /etc/asound.conf
+cp -n /opt/bt-speaker/mdp.conf /etc/mdp.conf
 
 # Install and start bt-speaker daemon
 echo
