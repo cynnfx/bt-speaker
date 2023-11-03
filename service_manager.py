@@ -23,8 +23,8 @@ def service_restart(channel):
     # time.sleep(2)
 
 # Add our function to execute when the button pressed event happens
-GPIO.add_event_detect(2, GPIO.FALLING, callback = service_restart, bouncetime = 2000)
+GPIO.add_event_detect(2, GPIO.FALLING, callback = service_restart, bouncetime = 5000)
 
 # Now wait!
 while 1:
-    time.sleep(0.5)
+    time.sleep(1)
