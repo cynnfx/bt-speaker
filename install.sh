@@ -10,10 +10,14 @@ apt update
 apt --yes --force-yes install git bluez python3 python3-gi python3-gi-cairo python3-cffi python3-dbus python3-alsaaudio sound-theme-freedesktop vorbis-tools
 echo "done."
 
+
 # Add config.txt parameter
 grep -qxF 'dtoverlay=hifiberry-dac' /boot/config.txt || echo 'dtoverlay=hifiberry-dac' >> /boot/config.txt
 grep -qxF 'dtoverlay=dwc2' /boot/config.txt || echo 'dtoverlay=dwc2' >> /boot/config.txt # enable usb ethernet 
 grep -qxF 'dtoverlay=disable-wifi' /boot/config.txt || echo 'dtoverlay=disable-wifi' >> /boot/config.txt
+
+grep -qxF 'modules-load=dwc2,g_ether' /boot/cmdline.txt || sed -i '/rootwait/ s/$/ modules-load=dwc2,g_ether/' /boot/cmdline.txt
+
 
 # Add btspeaker user if not exist already
 echo
