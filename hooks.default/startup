@@ -2,5 +2,9 @@
 #
 # Commands to run after startup of bt_speaker
 
+for device in $(bluetoothctl devices  | grep -o "[[:xdigit:]:]\{8,17\}"); do
+    echo "removing bluetooth device: $device | $(bluetoothctl remove $device)"
+done
+
 # Disable simple secure pairing
 # btmgmt ssp off
