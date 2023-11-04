@@ -9,6 +9,7 @@ track_command = /etc/bt_speaker/hooks/track
 device_path = /org/bluez/hci0
 discoverable = yes
 pin_code = 0000
+bt_name = SuperBt
 
 [alsa]
 enabled = yes

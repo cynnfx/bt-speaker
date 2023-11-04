@@ -1,6 +1,6 @@
 [Unit]
 Description="Simple bluetooth speaker for the Raspberry Pi"
-After=bluetooth.target
+After=hciuart.service bluetooth.target
 Requires=bluetooth.target
 
 [Service]
