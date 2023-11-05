@@ -16,7 +16,7 @@ grep -qxF 'dtoverlay=hifiberry-dac' /boot/config.txt || echo 'dtoverlay=hifiberr
 grep -qxF 'dtoverlay=dwc2' /boot/config.txt || echo 'dtoverlay=dwc2' >> /boot/config.txt # enable usb ethernet 
 grep -qxF 'dtoverlay=disable-wifi' /boot/config.txt || echo 'dtoverlay=disable-wifi' >> /boot/config.txt
 
-grep -qxF 'modules-load=dwc2,g_ether' /boot/cmdline.txt || sed -i '/rootwait/ s/$/ modules-load=dwc2,g_ether/' /boot/cmdline.txt
+grep -qF 'modules-load=dwc2,g_ether' /boot/cmdline.txt || sed -i '/rootwait/ s/$/ modules-load=dwc2,g_ether/' /boot/cmdline.txt
 
 
 # Add btspeaker user if not exist already
