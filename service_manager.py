@@ -12,7 +12,7 @@ BTN_PIN = 7
 SOUND_WELCOME = "/usr/share/sounds/freedesktop/stereo/service-login.oga"
 SOUND_OFF = "/usr/share/sounds/freedesktop/stereo/service-logout.oga"
 
-status = 1
+status = 0
 config = configparser.ConfigParser()
 config.read(SCRIPT_PATH + '/config.ini.default')
 config.read('/etc/bt_speaker/config.ini')
@@ -40,7 +40,7 @@ def init_bt():
     subprocess.call([f"ogg123 --quiet {SOUND_WELCOME}"], shell=True, stdin=None, stdout=None, stderr=None)
     subprocess.call([f"bluetoothctl system-alias '{BT_NAME}'"], shell=True, stdin=None, stdout=None, stderr=None)
     subprocess.call(["systemctl restart bt_speaker.service"], shell=True, stdin=None, stdout=None, stderr=None)
-    status = 0
+    status = 1
 
 def button_callback(channel):
     global status
