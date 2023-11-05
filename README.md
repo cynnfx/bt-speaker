@@ -1,114 +1,51 @@
-# BT-Speaker
+# Configurable Bluetooth Receiver with Raspberry Pi Zero W and HiFiBerry DAC+
 
-A simple Bluetooth Speaker Daemon designed for the Raspberry Pi 3.
+This project aims to create an affordable, configurable Bluetooth receiver using a Raspberry Pi Zero W running RaspiOS Bullseye and a HiFiBerry DAC+ Lite. It's designed to be simple to set up and use, requiring only a standard button and connection to an audio system via RCA cable. The receiver operates in a binary mode: ready to connect and play music or turned off.
 
-BT-Speaker aims to _just work_ on a vanilla installation using pure ALSA.
+## Features
+
+- **Simple Control**: Toggle the speaker on and off with a physical button.
+- **Easy Configuration**: Modify settings in `/boot/bt_config.ini` on the SD card when mounted on a PC.
+- **Bluetooth Name Configuration**: Personalize the Bluetooth discovery name.
+- **Startup and Shutdown Sounds**: Set custom sounds for turning on and off the receiver. These sounds must be in `.ogg` format and can be saved in the `/boot` directory for easy access.
 
 ## Installation
 
-Quick Installation for Raspberry Pi OS:
+You have two methods to install the software for this project:
 
-```bash
-sudo -i
-bash <(curl -s https://raw.githubusercontent.com/cynnfx/bt-speaker/master/install.sh)
+### Method 1: Manual Installation
+
+1. Connect to your Raspberry Pi in a root session with `sudo -i`.
+2. Execute the installation script:
+
+```console
+$ bash <(curl -s https://raw.githubusercontent.com/cynnfx/bt-speaker/master/install.sh)
 ```
 
-For details refer to the comments in the [install script](https://github.com/lukasjapan/bt-speaker/blob/master/install.sh).
+3. To configure, copy the `bt_config.ini.default` file to `/boot/bt_config.ini` and edit as needed.
 
-Depending on your application, you might also want to send all audio to the headphone jack.
-This can be done by `raspi-config`:
+### Method 2: Prebuilt Image
 
-`Advanced Options` -> `Audio` -> `Force 3.5mm ('headphone') jack`
+1. Download the `.img.gz` file from this repository.
+2. Flash it onto your SD card using a tool like rpi-imager.
+3. Insert the SD card into your Raspberry Pi, and you're ready to go.
 
-_Note_: Bt-speaker has been made with the default Raspberry Pi OS audio configuration in mind.
-If you are using external sound cards or have installed a sound daemon (like PulseAudio or Jack) you might need to adjust the config file accordingly.
+## Configuration File
 
-Having a sound daemon installed might even break things.
-So please keep in mind that BT-Speaker was made to avoid a heavy audio stack and will not officially support such setup.
+The `bt_config.ini` file is located in the `/boot` directory, which is the mountable partition when the SD card is inserted into a PC. This makes it easy to change settings without needing to access the Raspberry Pi directly.
 
-## Usage
+## Credits
 
-The BT-Speaker daemon does not behave like a typical bluetooth device.
-Once a client disconnects, the speaker will immediately allow other clients to connect.
-This means that the quickest device may claim the speaker and no real bluetooth pairing occurs.
-The bright side of this logic is that no button for unpairing is needed.
+This project is a fork of the `bt-speaker` repository originally created by [lukasjapan](https://github.com/lukasjapan). It relies heavily on his work, and many configurations are explained in his README. I have included an untouched version as `README.original` in this repository.
 
-The speakers name will default to the hostname of your Raspberry Pi.
-BT-Speaker does not manage this value.
-You are advised to change the hostname according to your needs.
+## License
 
-## Config
+GNU GENERAL PUBLIC LICENSE
 
-The default settings of BT-Speaker will be copied and can be overridden in `/etc/bt_speaker/config.ini`.
+## Contributing
 
-| Section    | Key                | Default Value                    | Description                                                                                                                                                |
-| ---------- | ------------------ | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| bt_speaker | play_command       | aplay -f cd -                    | The raw audio in CD Format (16bit little endian, 44100Hz, stereo) is piped to this command.                                                                |
-| bt_speaker | connect_command    | /etc/bt_speaker/hooks/connect    | Command that is called when an audio device connects to BT-Speaker                                                                                         |
-| bt_speaker | disconnect_command | /etc/bt_speaker/hooks/disconnect | Command that is called when an audio device disconnects from BT-Speaker                                                                                    |
-| bluez      | device_path        | /org/bluez/hci0                  | The DBUS path where BT-Speaker can find the bluetooth device                                                                                               |
-| bluez      | discoverable       | yes                              | Specifies if the raspberry pi should advertise itself if no client is connected.                                                                           |
-| bluez      | pin_code           | 0000                             | The pin code if `btmgmt ssp off`                                                                                                                           |
-| alsa       | enabled            | yes                              | Enables volume control via alsamixer                                                                                                                       |
-| alsa       | mixer              |                                  | The volume of this mixer will be set from AVRCP messages (Remote volume control) Use `HDMI` or `Headphone`. If not set, the first mixer available is used. |
-| alsa       | id                 | 0                                | The alsa id of the mixer control                                                                                                                           |
-| alsa       | cardindex          | 0                                | The alsa cardindex of the soundcard                                                                                                                        |
+I welcome contributions! Please feel free to submit pull requests or open issues for any improvements you suggest.
 
-The settings in the alsa section specify on which alsa mixer ([more info here](https://larsimmisch.github.io/pyalsaaudio/libalsaaudio.html#mixer-objects)) volume changes are applied.
-You need to adjust these settings if you are using an external sound card.
+---
 
-## Details of Implementation
-
-The BT-Speaker daemon has been written in Python and works with Bluez5.
-It talks to the Bluez daemon via the [Bluez DBUS interface](https://git.kernel.org/cgit/bluetooth/bluez.git/tree/doc).
-
-### Bluetooth profiles
-
-BT-Speaker will register itself as an [A2DP](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Advanced_Audio_Distribution_Profile_.28A2DP.29) capable device and route the received audio fully decoded to ALSAs `aplay` command.
-
-Changes in volume are detected via messages from the [AVRCP](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Audio.2FVideo_Remote_Control_Profile_.28AVRCP.29) profile and are applied directly to the ALSA master volume.
-
-### Bluetooth device class
-
-Some devices may filter out BT-Speaker and require the bluetooth device class to be expicitly set. Although BT-Speaker does not support to change the device class itself, you can change it manually after launching BT-Speaker.
-
-```ini
-pi@raspberrypi:~ $ sudo hciconfig hci0 class 0x240408
-```
-
-More about Bluetooth device classes can be found ([here](http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html))
-
-### Partial Bluez5 port of BT-Manager
-
-The great [BT-Manager](https://github.com/liamw9534/bt-manager) library does (currently) only work with Bluez4.
-Changes in the Bluez DBUS API [from version 4 to 5](http://www.bluez.org/bluez-5-api-introduction-and-porting-guide/) were huge and fully porting BT-Manager would have been a too heavy task.
-So instead, I extracted all relevant parts and ported them to Bluez5 as good as I could.
-Documentation and probably lots of other parts there have yet to be adjusted, so refer to [that code](bt_manager) with caution.
-
-### About the audio stream
-
-The following describes some internals of the audio stream that is transferred via bluetooth.
-
-#### Format
-
-The [Light of Dawn blog](http://www.lightofdawn.org/blog/?viewCat=Bluetooth) describes the format very accurate:
-
-> As it turns out, the audio data is compressed with [SBC codec](http://en.wikipedia.org/wiki/SBC_%28codec%29).
-> But I can't just use "sbcdec" tool from SBC package to decode it, as the audio data is encapsulated in A2DP packets, not naked SBC-compressed audio data.
-> A2DP packets are RTP packets (referenced by [A2DP specification](https://www.bluetooth.org/en-us/specification/adopted-specifications), and detailed in [this IETF draft](http://tools.ietf.org/html/draft-ietf-payload-rtp-sbc-04)) containing A2DP Media Payload.
-> We need to extract the SBC audio data, pass it through SBC decompressor, and only then we get raw audio data that can be sent to ALSA.
-
-Unfortunately there is no media player (or at least I didn't find any) that could handle this 'SBC in RTP' format natively.
-However, BT-Manager already provided a C library that takes care of the decoding process.
-The decoded output is raw audio data in CD format (16 bit little endian, 44100Hz, stereo) and can be piped to ALSA as mentioned in the blog.
-
-#### Decoding
-
-The C library for the decoding process is located in the [codecs](codecs) folder.
-Its functions are called via [Python CFFI](http://cffi.readthedocs.io/en/latest/).
-BT-Speaker provides the binary for ARM already, so there is no need to compile the codec manually.
-
-However, if you need to do so for some reason, please be aware that the Makefile has been adjusted by the following:
-
-1. The default `PLATFORM` setting has been changed to `armv6`
-1. The `-O3` flag has been added
+Enjoy your music wirelessly with this easily configurable Bluetooth receiver!
