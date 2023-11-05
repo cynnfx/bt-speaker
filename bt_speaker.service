@@ -1,14 +1,13 @@
 [Unit]
 Description="Simple bluetooth speaker for the Raspberry Pi"
 After=hciuart.service bluetooth.target
-Requires=bluetooth.target
 
 [Service]
 TimeoutStartSec=0
 WorkingDirectory=/opt/bt-speaker
 ExecStart=/opt/bt-speaker/bt_speaker.py
 Restart=always
-User=btspeaker
+User=root
 
 [Install]
 WantedBy=multi-user.target

@@ -1,12 +1,10 @@
 [Unit]
 Description="Simple bluetooth GPIO Service manager"
-After=bluetooth.target
-Requires=bluetooth.target
+After=hciuart.service bluetooth.target
 
 [Service]
 TimeoutStartSec=0
 WorkingDirectory=/opt/bt-speaker
-ExecStartPre=/bin/sleep 1
 ExecStart=/opt/bt-speaker/service_manager.py
 Restart=always
 User=root
