@@ -42,14 +42,14 @@ echo "done."
 
 # Prepare default config
 mkdir -p /etc/bt_speaker/hooks
-cp ${2:-n} /opt/bt-speaker/config.ini.default /etc/bt_speaker/config.ini
-cp ${2:-n} /opt/bt-speaker/hooks.default/connect /etc/bt_speaker/hooks/connect
-cp ${2:-n} /opt/bt-speaker/hooks.default/disconnect /etc/bt_speaker/hooks/disconnect
-cp ${2:-n} /opt/bt-speaker/hooks.default/startup /etc/bt_speaker/hooks/startup
-cp ${2:-n} /opt/bt-speaker/hooks.default/track /etc/bt_speaker/hooks/track
+cp -n /opt/bt-speaker/config.ini.default /etc/bt_speaker/config.ini
+cp -n /opt/bt-speaker/hooks.default/connect /etc/bt_speaker/hooks/connect
+cp -n /opt/bt-speaker/hooks.default/disconnect /etc/bt_speaker/hooks/disconnect
+cp -n /opt/bt-speaker/hooks.default/startup /etc/bt_speaker/hooks/startup
+cp -n /opt/bt-speaker/hooks.default/track /etc/bt_speaker/hooks/track
 # Add alsa conf for HifiBerry Dac+ Lite
-cp ${2:-n} /opt/bt-speaker/asound.conf /etc/asound.conf
-cp ${2:-n} /opt/bt-speaker/mdp.conf /etc/mdp.conf
+cp -n /opt/bt-speaker/asound.conf /etc/asound.conf
+cp -n /opt/bt-speaker/mdp.conf /etc/mdp.conf
 
 # Install and start bt-speaker daemon
 echo
